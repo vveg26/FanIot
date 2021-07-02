@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.UserDao">
+    <!--        缓存配置-->
+    <cache eviction="LRU" flushInterval="30000" size="512" readOnly="true"/>
+<!--    增-->
+    <insert id="addUser" parameterType="entity.mvc.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user (id, name, password, email, age, role) values(#{id}, #{name}, #{password}, #{email}, #{age}, #{role})
+    </insert>
+<!--    查-->
+    <select id="findUser" resultType="entity.mvc.User" parameterType="entity.mvc.User">
+        select * from user
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id!=0">id=#{id}</if>
+            <if test=" name!=null and name!='' ">and name=#{name}</if>
+            <if test=" email!=null and email!='' ">and email=#{email}</if>
+            <if test="age!=0">and age=#{age}</if>
+        </trim>
+    </select>
+    <!--    改-->
+    <update id="updateUserInfo" parameterType="entity.mvc.User">
+        update user
+        <set>
+            <if test=" name!=null and name!='' ">name=#{name},</if>
+            <if test=" password!=null and password!='' ">password=#{password},</if>
+            <if test=" email!=null and email!='' ">email=#{email},</if>
+            <if test=" role!=null and role!='' ">role=#{role},</if>
+            <if test="age!=0">age=#{age}</if>
+        </set>
+        where id=#{id}
+    </update>
+<!--    删-->
+    <delete id="deleteUser" parameterType="entity.mvc.User">
+        delete from user
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id!=0">id=#{id}</if>
+            <if test=" name!=null and name!='' ">and name=#{name}</if>
+            <if test=" email!=null and email!='' ">and email=#{email}</if>
+            <if test="age!=0">and age=#{age}</if>
+        </trim>
+    </delete>
+</mapper>

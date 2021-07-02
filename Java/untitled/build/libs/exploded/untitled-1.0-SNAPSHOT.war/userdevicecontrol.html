@@ -1,0 +1,170 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>设备控制</title>-->
+
+<!--    <script src="resources/scripts/jquery-3.2.1.min.js"></script>-->
+<!--    <script type="text/javascript" src="scripts/userManage.js"></script>-->
+<!--    <script type="text/javascript" src="scripts/util.js"></script>-->
+<!--    <script src="resources/scripts/toastr.js"></script>-->
+<!--    <link href="resources/css/toastr.css" rel="stylesheet"/>-->
+<!--    <script src="scripts/util.js"></script>-->
+<!--    <script src="scripts/deviceManage.js"></script>-->
+<!--    <script src="scripts/deviceControl.js"></script>-->
+<!--    <script src="scripts/websocketManage.js"></script>-->
+<!--    <link href="resources/css/device.css" rel="stylesheet"/>-->
+<!--    <link href="resources/css/element-ui.css" rel="stylesheet"/>-->
+
+<!--    <script src="resources/scripts/stomp.js"></script>-->
+<!--    <script src="resources/scripts/sockjs.min.js"></script>-->
+<!--    <script src="resources/scripts/chart.js"></script>-->
+
+<!--</head>-->
+
+<!--<body onload="webSocketService();" onbeforeunload="webSocketClose();">-->
+
+<!--<div class="fan" style="position: absolute; left: -300px;">-->
+<!--    <h1 id="relTimeTem" style="margin-top: -100px;">实时温度：0 ºC</h1>-->
+<!--    <h1 id="relTimeHum" style="position:absolute;margin-top: -45px; margin-left: 350px; width: 100%">实时湿度：0 %</h1>-->
+<!--    <div class="fan">-->
+<!--        <div class="btn-auto" id="btn-auto" onclick="onFanWorkModeClick();"></div>-->
+<!--        <input type="checkbox" id="btn" onclick="onFanSwitchClick();">-->
+<!--        <label class="fan-work" for="btn">-->
+<!--            <span></span>-->
+<!--            <span></span>-->
+<!--            <span></span>-->
+<!--        </label>-->
+<!--        <div class="base"></div>-->
+<!--    </div>-->
+
+<!--    <div style="position: absolute; left: 400px; top: 100px">-->
+<!--        <img src="resources/images/lightoff.png" id="light" width="200" height="200" alt="">-->
+<!--        <div onclick="onLightClick();"-->
+<!--             style="position: absolute; top: 1px; left: 42px; border-radius: 50%; cursor: pointer; width: 120px; height: 120px;"></div>-->
+<!--    </div>-->
+
+<!--    <div style="position: absolute; top: 410px;">-->
+<!--        <div style="position: absolute; left: -70px; top: -3px;">温度阀值</div>-->
+<!--        <div id="temLimitVal-div" style="position: absolute; top: -3px; left: 420px;">ºC</div>-->
+<!--        <input id="temSlider" type="range" onchange="onTemLimitChange()" min="0" max="100" value="0"-->
+<!--               style="width: 400px;">-->
+<!--    </div>-->
+
+<!--    <div style="position: absolute; top: 360px; left: 120px;">-->
+<!--        <div style="position: absolute; left: -70px; top: 2px;">数据上报时间间隔</div>-->
+<!--        <div style="position: absolute; top: 2px; left: 190px;">秒</div>-->
+<!--        <input id="intervalTime" type="text" onchange="onIntervalTimeChange()"  value="0"-->
+<!--               style=" margin-left: 75px; width: 100px">-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--&lt;!&ndash;<div id="main-content" class="container">&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="row">&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="col-md-6">&ndash;&gt;-->
+<!--&lt;!&ndash;            <form class="form-inline">&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="form-group">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <label for="name">What is your name?</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <input type="text" id="name" class="form-control" placeholder="Your name here...">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <button id="send" class="btn btn-default" type="submit">Send</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </form>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="row">&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="col-md-12">&ndash;&gt;-->
+<!--&lt;!&ndash;            <table id="conversation" class="table table-striped">&ndash;&gt;-->
+<!--&lt;!&ndash;                <thead>&ndash;&gt;-->
+<!--&lt;!&ndash;                <tr>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <th>Greetings</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                </tr>&ndash;&gt;-->
+<!--&lt;!&ndash;                </thead>&ndash;&gt;-->
+<!--&lt;!&ndash;                <tbody id="greetings">&ndash;&gt;-->
+<!--&lt;!&ndash;                </tbody>&ndash;&gt;-->
+<!--&lt;!&ndash;            </table>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--</body>-->
+
+
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设备控制</title>
+
+    <script src="resources/scripts/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="scripts/userManage.js"></script>
+    <script type="text/javascript" src="scripts/util.js"></script>
+    <script src="resources/scripts/toastr.js"></script>
+    <link href="resources/css/toastr.css" rel="stylesheet"/>
+    <script src="scripts/util.js"></script>
+    <script src="scripts/deviceManage.js"></script>
+    <script src="scripts/deviceControl.js"></script>
+    <script src="scripts/websocketManage.js"></script>
+    <link href="resources/css/device.css" rel="stylesheet"/>
+    <link href="resources/css/element-ui.css" rel="stylesheet"/>
+
+    <script src="resources/scripts/stomp.js"></script>
+    <script src="resources/scripts/sockjs.min.js"></script>
+    <script src="resources/scripts/chart.js"></script>
+
+</head>
+
+<body background="mv.jpg" onload="webSocketService();" onbeforeunload="webSocketClose();">
+<div style="margin-left: 30px;margin-top: 150px" >
+    <h1>温湿度板块</h1>
+    <div style="position: absolute; top: 245px; left: 30px;">
+        <h3 id="relTimeTem" style="color: red">温度：0 ºC</h3><p></p>
+
+        <h3 style="margin-top: 20px;color: #2F96B4" id="relTimeHum" >湿度：0 %</h3>
+
+    </div>
+
+    <div style="position: absolute; top: 400px; left: 100px;">
+        <div style="position: absolute; left: -70px; top: 2px;"><h4>数据上报时间</h4></div>
+        <div style="position: absolute; top: 2px; left: 120px;"><h4>秒</h4></div>
+        <input id="intervalTime" type="text" onchange="onIntervalTimeChange()"  value="1"
+               style=" margin-left: 45px; width: 60px ;margin-top: 2px">
+    </div>
+    <div style="position: absolute; top: 350px; left: 100px">
+        <div style="position: absolute; left: -70px; top: -2px;"><h4>温度阀值</h4></div>
+
+        <!--    <input id="temSlider" type="range" onchange="onTemLimitChange()" min="0" max="100" value="0"-->
+        <!--           style="width: 200px;">-->
+        <input id="temSlider" type="text" onchange="onTemLimitChange()" min="0" max="100" value="0"
+               style="width: 60px; top: -10px;"><br>
+        <div id="temLimitVal-div" style="position: absolute; top: 0px; left: 100px;">ºC</div>
+    </div>
+
+</div>
+
+<div class="fan" style="position: absolute; left: -300px; top: 0px">
+    <h1>电风扇</h1>
+    <div class="fan">
+        <div style="margin-top: 100px ;margin-left:150px;"><h4 style="color: #0a6cd6">自动模式/手动模式</h4></div>
+        <div style="margin-top: -20px ;margin-left:30px;"><h4 style="color: #5daf34">风扇开关</h4></div>
+        <div  class="btn-auto" id="btn-auto" onclick="onFanWorkModeClick();"></div>
+        <input type="checkbox" id="btn" onclick="onFanSwitchClick();">
+
+    </div>
+
+    <div style="position: absolute; left: 500px; top: 0px">
+        <h1>灯</h1>
+        <img src="resources/images/lightoff.png" id="light" width="200" height="200" alt="">
+        <div onclick="onLightClick();"
+             style="position: absolute; top: 1px; left: 42px; border-radius: 50%; cursor: pointer; width: 120px; height: 120px;"></div>
+    </div>
+
+
+</div>
+
+</body>
+
+</html>

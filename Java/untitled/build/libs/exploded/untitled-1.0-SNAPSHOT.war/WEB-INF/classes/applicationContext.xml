@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util.xsd
+    http://www.springframework.org/schema/mvc
+    https://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/aop
+    https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--    启动Springmvc注解驱动-->
+    <mvc:annotation-driven/>
+
+    <!--    拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="controller.interceptor.AuthorizationInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 开启组件扫描 -->
+    <context:component-scan base-package="controller, service, entity, dao, config"/>
+
+    <!--    开启AOP注解@Aspect（切面），@Before，@After-->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!-- 配置视图解析器ViewResolver，负责将视图名解析成具体的视图技术 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".html"/>
+    </bean>
+
+    <!--    配置数据库连接信息-->
+    <util:properties id="jdbc" location="classpath:db.properties"/>
+    <bean id="dbcp" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="#{jdbc.driver}"/>
+        <property name="url" value="#{jdbc.url}"/>
+        <property name="username" value="#{jdbc.user}"/>
+        <property name="password" value="#{jdbc.pwd}"/>
+    </bean>
+
+    <!--    配置SqlSessionFactoryBean-->
+    <!--    可以定义一些属性来指定Mybatis框架的配置信息-->
+    <bean id="ssf" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--        数据源，注入连接信息-->
+        <property name="dataSource" ref="dbcp"/>
+        <!--        额外的Mybatis框架配置信息-->
+        <property name="configLocation" value="classpath:mybatisConfig.xml"/>
+        <!--        用于指定sql定义文件的位置-->
+        <property name="mapperLocations" value="classpath:sql/*.xml"/>
+    </bean>
+
+    <!-- 按指定包扫描接口，批量生成接口实现对象，id为接口名首字母小写 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--        指定扫描dao包下所有接口-->
+        <property name="basePackage" value="dao"/>
+        <!--        注入sqlSessionFactory-->
+        <property name="sqlSessionFactoryBeanName" value="ssf"/>
+    </bean>
+
+
+    <!-- 配置redis, 缓存token -->
+    <bean id="propertyConfigurerRedis" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="order" value="1"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:redisConfig.properties</value>
+                <!--                <value>classpath:mongoConfig.properties</value>-->
+            </list>
+        </property>
+    </bean>
+    <!-- jedis pool配置 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="minIdle" value="${redis.minIdle}"/>
+        <property name="maxWaitMillis" value="${redis.maxWaitMillis}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+    </bean>
+    <!-- spring data redis -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="usePool" value="true"/>
+        <property name="hostName" value="${redis.host}"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="password" value="${redis.pass}"/>
+        <property name="timeout" value="${redis.timeout}"/>
+        <property name="database" value="${redis.default.db}"/>
+        <constructor-arg index="0" ref="jedisPoolConfig"/>
+    </bean>
+    <!-- String类型对RedisTemplate模版 -->
+    <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+        <constructor-arg index="0" ref="jedisConnectionFactory"/>
+    </bean>
+
+
+</beans>
