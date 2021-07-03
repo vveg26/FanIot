@@ -5,4 +5,4 @@
 # Adnrio
  编写设备端的topic及其连接
 # Mqtt流转规则
- ![rule]./img
+ ![rule](/img/rule.jpg)
